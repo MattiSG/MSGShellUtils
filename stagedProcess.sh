@@ -1,7 +1,7 @@
 # Part of [MSGShellUtils](github.com/MattiSG/MSGShellUtils)
 # Author: [Matti Schneider-Ghibaudo](mattischneider.fr)
 
-source ./ui.sh
+# requires ui.sh
 initializeANSI
 
 # The goal of this set of functions is to let you describe a setup / cleanup script in a very pretty manner, with different user-specified MSGstages.
