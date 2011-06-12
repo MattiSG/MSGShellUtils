@@ -15,8 +15,7 @@ Architecture
 The functions are stored in files by category.
 
 * `ui.sh`: anything that enhances CLI;
-* `paths.sh`: utils for working with paths;
-* 
+* `paths.sh`: utils for working with paths.
 
 License
 -------
