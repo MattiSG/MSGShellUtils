@@ -1,0 +1,10 @@
+*.xcodeproj
+build
+bin
+jars
+dist
+*.pages
+*.exe
+*~
+*.bak
+
