@@ -15,7 +15,8 @@ Architecture
 The functions are stored in files by category.
 
 * `ui.sh`: anything that enhances CLI;
-* `paths.sh`: utils for working with paths.
+* `paths.sh`: utils for working with paths;
+* `stagedProcess.sh`: a set of functions that let you describe a complex, staged process (such as a setup or cleanup operation) in an expressive and simple description.
 
 License
 -------
