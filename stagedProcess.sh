@@ -34,27 +34,27 @@ MSG_USE_GROWL=1
 
 
 dot() {
-	echo -n " $greenf.$reset"
+	echo " $greenf ✓ $reset"
 }
 
 bang() {
-	echo -n " $redf!$reset"
+	echo " $redf ✗ $reset"
 }
 
 category() {
-	echo -n $1'…'
+	echo $blueb$boldon$1'…'$reset
 	MSGcurrentCategory=$1
 }
 
 ok() {
 	if 	[[ $MSGcategoryErrors  != 0 ]]
 	then
-		echo "$redf$boldon > error!$reset"
+		echo "$redb$boldon  ✘  $reset"
 		if [[ $MSG_USE_GROWL ]]
 		then growlnotify "$MSGcurrentCategory failed" -m "$MSGcategoryErrors errors encountered" -p High
 		fi
 	else
-		echo "$greenf$boldon ok$reset"
+		echo "$greenb$boldon  ✔  $reset"
 		if [[ $MSG_USE_GROWL ]]
 		then growlnotify "$MSGcurrentCategory succeeded" -m "No errors encountered"
 		fi
@@ -69,13 +69,13 @@ ok() {
 end() {
 	if [[ $MSGglobalErrors = 0 ]]
 	then
-		echo "$greenb$blackf$boldon     Done!     $reset"
+		echo "$greenb$blackf$boldon	Done!		$reset"
 		if [[ $MSG_USE_GROWL ]]
 		then growlnotify "$MSGcurrentCategory succeeded" -m "No errors encountered"
 		fi
 		exit 0
 	else
-		echo "$redb$blackf$boldon     Errors occured!     $reset"
+		echo "$redb$blackf$boldon	Errors occured!		$reset"
 		if [[ $MSG_USE_GROWL ]]
 		then growlnotify "$MSGcurrentCategory failed" -m "$MSGglobalErrors errors encountered"
 		fi
