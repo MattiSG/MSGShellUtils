@@ -27,52 +27,85 @@ initializeANSI
 
 
 MSGstage=$1
-MSGglobalError=0
-MSGcategoryError=0
+MSGcurrentCategory=''
+MSGglobalErrors=0
+MSGcategoryErrors=0
+MSG_USE_GROWL=1
+
 
 dot() {
-	echo -n "$greenf.$reset"
+	echo -n " $greenf.$reset"
+}
+
+bang() {
+	echo -n " $redf!$reset"
 }
 
 category() {
-	echo -n $1
+	echo -n $1'…'
+	MSGcurrentCategory=$1
 }
 
 ok() {
-	if 	[[ $MSGcategoryError  != 0 ]]
-	then echo "$redf$boldon > error!$reset"
-	else echo "$greenf$boldon ok$reset"
+	if 	[[ $MSGcategoryErrors  != 0 ]]
+	then
+		echo "$redf$boldon > error!$reset"
+		if [[ $MSG_USE_GROWL ]]
+		then growlnotify "$MSGcurrentCategory failed" -m "$MSGcategoryErrors errors encountered" -p High
+		fi
+	else
+		echo "$greenf$boldon ok$reset"
+		if [[ $MSG_USE_GROWL ]]
+		then growlnotify "$MSGcurrentCategory succeeded" -m "No errors encountered"
+		fi
 	fi
 	
-	MSGcategoryError=0
+	prevErrorCount=$MSGcategoryErrors
+	MSGcategoryErrors=0
+
+	return $prevErrorCount
 }
 
 end() {
-	if [[ $MSGglobalError = 0 ]]
+	if [[ $MSGglobalErrors = 0 ]]
 	then
 		echo "$greenb$blackf$boldon     Done!     $reset"
+		if [[ $MSG_USE_GROWL ]]
+		then growlnotify "$MSGcurrentCategory succeeded" -m "No errors encountered"
+		fi
 		exit 0
 	else
 		echo "$redb$blackf$boldon     Errors occured!     $reset"
+		if [[ $MSG_USE_GROWL ]]
+		then growlnotify "$MSGcurrentCategory failed" -m "$MSGglobalErrors errors encountered"
+		fi
 		exit 1
 	fi
 }
 
+#Tries the passed in command (may be several arguments)
+#Returns the command's return value
 try() {
-	if [[ $MSGstage ]] && [[ $MSGstage = 'verbose' ]]
-	then 
-		if ! $*
-		then
-			MSGcategoryError=1
-			MSGglobalError=1
-		fi
-	else
-		if ! $* > /dev/null
-		then
-			MSGcategoryError=1
-			MSGglobalError=1
-		fi
+	if ! $*
+	then
+		let MSGcategoryErrors++
+		let MSGglobalErrors++
 	fi
+
+	return $?
+}
+
+#Tries the passed in command like `try`, but redirects all outputs to log and simply outputs a dot.
+try_silent() {
+	if try $* > $LOG 2> $LOG
+	then dot
+	else bang
+	fi
+}
+
+#$1 = message. Optional. Title will always be the current category.
+growl() {
+	growlnotify -t $MSGcurrentCategory -m $1
 }
 
 continue_unless() {
