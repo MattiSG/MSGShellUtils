@@ -31,14 +31,15 @@ MSGcurrentCategory=''
 MSGglobalErrors=0
 MSGcategoryErrors=0
 MSG_USE_GROWL=1
+LIMIT=40 #how many characters from tried commands should be displayed?
 
 
 dot() {
-	echo " $greenf ✓ $reset"
+	echo -n " $greenf ✓ $reset"
 }
 
 bang() {
-	echo " $redf ✗ $reset"
+	echo -n " $redf ✗ $reset"
 }
 
 category() {
@@ -86,21 +87,30 @@ end() {
 #Tries the passed in command (may be several arguments)
 #Returns the command's return value
 try() {
-	if ! $*
+	if $*
 	then
+		dot
+	else
+		bang
+		
 		let MSGcategoryErrors++
 		let MSGglobalErrors++
 	fi
+	
+	echo -n $* | cut -c1-$LIMIT
+#	if [[ $(echo -n $* | wc -c) -gt $LIMIT ]]
+#	then echo -n '…' #TODO: unfortunately, cut will always add a newline. Uncomment when a workaround is found.
+#	fi
+	echo
 
 	return $?
 }
 
 #Tries the passed in command like `try`, but redirects all outputs to log and simply outputs a dot.
 try_silent() {
-	if try $* > $LOG 2> $LOG
-	then dot
-	else bang
-	fi
+	try $* "> $LOG 2> $LOG"
+	
+	return $?
 }
 
 #$1 = message. Optional. Title will always be the current category.
