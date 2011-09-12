@@ -121,7 +121,7 @@ try_silent() {
 
 #$1 = message. Optional. Title will always be the current category.
 growl() {
-	growlnotify -t $MSGcurrentCategory -m $1
+	growlnotify -t $MSGcurrentCategory -m $1 2> /dev/null
 }
 
 continue_unless() {
