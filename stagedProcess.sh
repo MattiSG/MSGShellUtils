@@ -32,6 +32,7 @@ MSGglobalErrors=0
 MSGcategoryErrors=0
 MSG_USE_GROWL=1
 LIMIT=40 #how many characters from tried commands should be displayed?
+LOG="log.txt" # this should be redefined by calling scripts
 
 
 dot() {
@@ -72,13 +73,17 @@ end() {
 	then
 		echo "$greenb$blackf$boldon	Done!		$reset"
 		if [[ $MSG_USE_GROWL ]]
-		then growlnotify "$MSGcurrentCategory succeeded" -m "No errors encountered"
+		then
+			growlnotify "$MSGcurrentCategory succeeded" -m "No errors encountered"
+			echo "[$(date)]	process succeeded" >> $LOG
 		fi
 		exit 0
 	else
 		echo "$redb$blackf$boldon	Errors occured!		$reset"
 		if [[ $MSG_USE_GROWL ]]
-		then growlnotify "$MSGcurrentCategory failed" -m "$MSGglobalErrors errors encountered"
+		then
+			growlnotify "$MSGcurrentCategory failed" -m "$MSGglobalErrors errors encountered"
+			echo "[$(date)]	**process failed**" >> $LOG
 		fi
 		exit 1
 	fi
@@ -95,8 +100,9 @@ try() {
 		
 		let MSGcategoryErrors++
 		let MSGglobalErrors++
-	fi
-	
+		echo "[$(date)]	** $* failed**" >> $LOG
+	fi	
+
 	echo -n $* | cut -c1-$LIMIT
 #	if [[ $(echo -n $* | wc -c) -gt $LIMIT ]]
 #	then echo -n '…' #TODO: unfortunately, cut will always add a newline. Uncomment when a workaround is found.
@@ -108,7 +114,7 @@ try() {
 
 #Tries the passed in command like `try`, but redirects all outputs to log and simply outputs a dot.
 try_silent() {
-	try $* "> $LOG 2> $LOG"
+	try $* >> $LOG 2>> $LOG
 	
 	return $?
 }
