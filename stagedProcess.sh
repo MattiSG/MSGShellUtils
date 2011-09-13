@@ -2,7 +2,6 @@
 # Author: [Matti Schneider-Ghibaudo](mattischneider.fr)
 
 # requires ui.sh
-initializeANSI
 
 # The goal of this set of functions is to let you describe a setup / cleanup script in a very pretty manner, with different user-specified MSGstages.
 # Real-world example:
@@ -129,3 +128,13 @@ continue_unless() {
 	then end
 	fi
 }
+
+synopsis() {
+	egrep 'category|continue_unless|^end' $0 | sed s/category/"$blueb →"/g | sed s/continue_unless/"  $cyanb ⎋"/g | sed s/end/$reset/ | sed s/\'//g
+}
+
+if [[ $1 == -msg-scenario ]]
+then
+	synopsis
+	exit 0
+fi
