@@ -10,6 +10,7 @@
 # Example:
 #	echo "$redf Error!$reset"
 #	echo "$greenf$boldon Finished!$reset"
+
 initializeANSI()
 {
 	esc=""
@@ -29,3 +30,5 @@ initializeANSI()
 	
 	reset="${esc}[0m"
 }
+
+initializeANSI
