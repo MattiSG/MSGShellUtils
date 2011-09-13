@@ -24,15 +24,16 @@
 # 	try $php ./symfony pr:p
 # ok
 
+ # To be refined by calling scripts
+MSG_USE_GROWL=1
+MSG_LIMIT=40 #how many characters from tried commands should be displayed?
+LOG="log.txt" # where to log everything from try_silent?
 
+# Private vars
 MSGstage=$1
 MSGcurrentCategory=''
 MSGglobalErrors=0
 MSGcategoryErrors=0
-MSG_USE_GROWL=1
-LIMIT=40 #how many characters from tried commands should be displayed?
-LOG="log.txt" # this should be redefined by calling scripts
-
 
 dot() {
 	echo -n " $greenf ✓ $reset"
@@ -73,7 +74,7 @@ end() {
 		echo "$greenb$blackf$boldon	Done!		$reset"
 		if [[ $MSG_USE_GROWL ]]
 		then
-			growlnotify "$MSGcurrentCategory succeeded" -m "No errors encountered"
+			growlnotify "Process succeeded" -m "No errors encountered"
 			echo "[$(date)]	process succeeded" >> $LOG
 		fi
 		exit 0
@@ -81,7 +82,7 @@ end() {
 		echo "$redb$blackf$boldon	Errors occured!		$reset"
 		if [[ $MSG_USE_GROWL ]]
 		then
-			growlnotify "$MSGcurrentCategory failed" -m "$MSGglobalErrors errors encountered" -p High
+			growlnotify "Process failed" -m "$MSGglobalErrors errors encountered" -p High --sticky
 			echo "[$(date)]	**process failed**" >> $LOG
 		fi
 		exit 1
@@ -102,8 +103,8 @@ try() {
 		echo "[$(date)]	** $* failed**" >> $LOG
 	fi	
 
-	echo -n $* | cut -c1-$LIMIT
-#	if [[ $(echo -n $* | wc -c) -gt $LIMIT ]]
+	echo -n $* | cut -c1-$MSG_LIMIT
+#	if [[ $(echo -n $* | wc -c) -gt $MSG_LIMIT ]]
 #	then echo -n '…' #TODO: unfortunately, cut will always add a newline. Uncomment when a workaround is found.
 #	fi
 	echo
@@ -120,7 +121,7 @@ try_silent() {
 
 #$1 = message. Optional. Title will always be the current category.
 growl() {
-	growlnotify -t $MSGcurrentCategory -m $1 2> /dev/null
+	growlnotify -t $MSGcurrentCategory -m $1
 }
 
 continue_unless() {
