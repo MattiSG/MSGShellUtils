@@ -58,7 +58,7 @@ ok() {
 	else
 		echo "$greenb$boldon  ✔  $reset"
 		if [[ $MSG_USE_GROWL ]]
-		then growlnotify "$MSGcurrentCategory succeeded" -m "No errors encountered"
+		then growlnotify "$MSGcurrentCategory succeeded" -m "No errors encountered" -p Moderate
 		fi
 	fi
 	
@@ -82,7 +82,7 @@ end() {
 		echo "$redb$blackf$boldon	Errors occured!		$reset"
 		if [[ $MSG_USE_GROWL ]]
 		then
-			growlnotify "$MSGcurrentCategory failed" -m "$MSGglobalErrors errors encountered"
+			growlnotify "$MSGcurrentCategory failed" -m "$MSGglobalErrors errors encountered" -p High
 			echo "[$(date)]	**process failed**" >> $LOG
 		fi
 		exit 1
